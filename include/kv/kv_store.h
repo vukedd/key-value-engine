@@ -4,7 +4,6 @@
 #include <string_view>
 #include <optional>
 #include <unordered_map>
-#include <cstddef>
 
 namespace kv {
     class KVStore {
