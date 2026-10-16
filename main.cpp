@@ -15,6 +15,5 @@ int main() {
         std::cout << "deleted" << std::endl;
     }
 
-
     return 0;
 }

@@ -12,6 +12,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # use standard cpp only
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# adds line to sanitizer logs
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+# add address and undefined behavior sanitizers for easier debugging, keep in mind that this should be
+# used only in development since it uses up extra memory and slows down the program itself.
+add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+add_link_options(-fsanitize=address,undefined)
+
 # build runnable program target from this file
 add_executable(main main.cpp)
 
@@ -31,3 +41,20 @@ target_compile_options(kvengine PRIVATE -Wall -Wextra -Wpedantic)
 
 # -||-
 target_compile_options(main PRIVATE -Wall -Wextra -Wpedantic)
+
+# add dependencies necessary for testing
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(googletest)
+
+# build tests target
+add_executable(kv_tests tests/kv_store_test.cpp)
+
+# links the engine and the test package to kv_tests target so it an be accesible.
+target_link_libraries(kv_tests PRIVATE kvengine GTest::gtest_main)
+
+target_compile_options(kv_tests PRIVATE -Wall -Wextra -Wpedantic)
