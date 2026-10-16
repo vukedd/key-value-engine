@@ -41,3 +41,20 @@ target_compile_options(kvengine PRIVATE -Wall -Wextra -Wpedantic)
 
 # -||-
 target_compile_options(main PRIVATE -Wall -Wextra -Wpedantic)
+
+# add dependencies necessary for testing
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.tar.gz
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(googletest)
+
+# build tests target
+add_executable(kv_tests tests/kv_store_test.cpp)
+
+# links the engine and the test package to kv_tests target so it an be accesible.
+target_link_libraries(kv_tests PRIVATE kvengine GTest::gtest_main)
+
+target_compile_options(kv_tests PRIVATE -Wall -Wextra -Wpedantic)
